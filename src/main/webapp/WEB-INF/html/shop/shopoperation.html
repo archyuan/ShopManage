@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+
+<header class="bar bar-nav">
+    <h1 class='title'>商店信息</h1>
+</header>
+<div class="content">
+    <div class="list-block">
+        <ul>
+            <!-- Text inputs -->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">商铺名称</div>
+                        <div class="item-input">
+                            <input type="text" id="shop-name" placeholder="商铺名称">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--商铺分类-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">商铺分类</div>
+                        <div class="item-input">
+                            <select id="shop-category">
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--区域分类-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">所属区域</div>
+                        <div class="item-input">
+                            <select id="area">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--详细地址-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">详细地址</div>
+                        <div class="item-input">
+                            <input type="text" id="shop-addr" placeholder="详细地址">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--联系电话-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">联系电话</div>
+                        <div class="item-input">
+                            <input type="text" id="shop-phone" placeholder="联系电话">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--缩略图-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">缩略图</div>
+                        <div class="item-input">
+                            <input type="file" id="shop-img" >
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--店铺简介-->
+            <li class="align-top">
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title label">店铺简介</div>
+                        <div class="item-input">
+                            <textarea id="shop-desc" placeholder="店铺简介"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <!--验证码-->
+            <li>
+                <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                        <input type="text" id="j_captcha" placeholder="验证码">
+                        <div class="item-input">
+                            <img id="captcha_img" alt="点击更换" title="点击更换"
+                            onclick="changeVerifyCode(this)" src="../Kaptcha">
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+            
+    <div class="content-block">
+        <div class="row">
+            <div class="col-50"><a href="#" class="button button-big button-fill button-danger">返回</a></div>
+            <div class="col-50"><a href="#" class="button button-big button-fill button-success"
+            id="submit">提交</a></div>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+    <script type="text/javascript" src="../resource/js/common/common.js">
+
+    </script>
+    <script  type="text/javascript"  charset='utf-8'>
+
+
+        function getShopInitInfo(initUrl,registerUrl) {
+            $.getJSON(initUrl,function (data) {
+
+                if(data.success == true){
+                    var tempHtml = '';
+                    var tempAreaHtml = '';
+                    data.shopCategoryList.map(function (item,index) {
+                        tempHtml += '<option data-id="'+ item.shopCategoryId
+                            + '">' + item.shopCategoryName + '</option>';
+                    });
+
+                    data.areaList.map(function (item,index) {
+                        tempAreaHtml+='<option data-id="'+item.areaId
+                            +'">'+item.areaName+'</option>';
+                    });
+                    $("#shop-category").html(tempHtml);
+                    $("#area").html(tempAreaHtml);
+                }
+
+            });
+
+        }
+
+
+        function getShopInfo(shopInfoUrl,shopId){
+            $.getJSON(shopInfoUrl,function (data) {
+                if(data.success){
+                    var shop = data.shop;
+                    $("#shop-name").val(shop.shopName);
+                    $("#shop-addr").val(shop.shopAddr);
+                    $("#shop-phone").val(shop.phone);
+                    $("#shop-desc").val(shop.shopDesc);
+                    var shopCategory = '<option data-id="'
+                    +shop.shopCategory.shopCategoryId+'"selected>'
+                    +shop.shopCategory.shopCategoryName+'</option>>';
+                    var tempAreaHtml = '';
+                    data.areaList.map(function (item,index) {
+                        tempAreaHtml+='<option data-id="'+item.areaId
+                            +'">'+item.areaName+'</option>';
+                    });
+                    $("#shop-category").html(shopCategory);
+                    $("#shop-category").attr('disabled','disabled');
+                    $("#area").html(tempAreaHtml);
+                    $("area").attr("data-id",shop.areaId);
+                }
+            });
+        }
+
+
+
+        $(document).ready(function () {
+            var shopId = getQueryString('shopId');
+            var isEdit = shopId?true:false;
+            var initUrl = '/background_war/shopmanagement/shopinitinfo';
+            var registerUrl = '/background_war/shopmanagement/registershop';
+            var shopInfoUrl = '/background_war/shopmanagement/getshopbyid?shopId='+shopId;
+            var editShopUrl ='/background_war/shopmanagement/modifyshop';
+            if(!isEdit){
+            getShopInitInfo(initUrl,registerUrl);
+            }else {
+                getShopInfo(shopInfoUrl,shopId);
+            }
+
+            $("#submit").click(function () {
+                var shop = {};
+                shop.shopName = $("#shop-name").val();
+                shop.shopAddr = $("#shop-addr").val();
+                shop.phone = $("#shop-phone").val();
+                shop.shopDesc = $("#shop-desc").val();
+                shop.shopId = shopId;
+                shop.shopCategory = {
+                    shopCategoryId:$("#shop-category")
+                        .find('option')
+                        .not(function () {
+                            return !this.selected;
+                        }).data('id')
+                };
+                shop.area = {
+                    areaId:$("#area")
+                        .find('option')
+                        .not(function () {
+                            return !this.selected;
+                        }).data('id')
+                };
+                var shopImg = $("#shop-img")[0].files[0];
+                var formData = new FormData();
+                formData.append('shopImg',shopImg);
+                formData.append('shopStr',JSON.stringify(shop));
+                var verifyCodeActual = $("#j_captcha").val();
+                if(!verifyCodeActual){
+                    alert("请输入验证码!");
+                    return;
+                }
+                formData.append("verifyCodeActual",verifyCodeActual);
+                $.ajax({
+                    url:isEdit ? editShopUrl:registerUrl,
+                    type:'POST',
+                    data:formData,
+                    contentType:false,
+                    processData:false,
+                    cache:false,
+                    success:function (data) {
+                        if(data.success){
+                            alert('提交成功');
+                        }else {
+                            alert('提交失败'+data.errMsg);
+                        }
+                        $("#captcha_img").click();
+                    }
+                });
+            });
+
+        })
+
+
+    </script>
+</body>
+
+</html>

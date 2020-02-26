@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:property-placeholder  location="classpath:redis.properties"  />
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="100" />
+		<property name="maxIdle" value="20" />
+		<property name="maxWaitMillis" value="3000" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+
+	<bean id="jedisWritePool" class="com.jyy.cache.JedisPoolWriper"
+		depends-on="jedisPoolConfig">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="39.106.98.67" />
+		<constructor-arg index="2" value="6379" type="int" />
+	</bean>
+
+	<bean id="jedisUtil" class="com.jyy.cache.JedisUtil"
+		scope="singleton">
+		<constructor-arg name="jedisPoolWriper" ref="jedisWritePool" />
+	</bean>
+	<bean class="com.jyy.cache.JedisUtil$Keys" id="jedisKeys" scope="singleton">
+	</bean>
+	<bean class="com.jyy.cache.JedisUtil$Strings" id="jedisStrings" scope="singleton">
+	</bean>
+</beans>    
